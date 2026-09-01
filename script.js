@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function transformMessageId(value) {
         if (value.includes('<') && value.includes('>')) {
-            return value.replace(/<([^@]+)@([^>]+)>/, (match, localPart, domain) => `<[IDmailer]_id_[ID]-f_${localPart}[EID]@${domain}>`);
+            return value.replace(/<([^@]+)@([^>]+)>/, (match, localPart, domain) => `<${localPart}[EID]@${domain}>`);
         }
         return value;
     }

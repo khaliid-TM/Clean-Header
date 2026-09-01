@@ -1,0 +1,309 @@
+/* styles.css */
+
+:root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --text-color: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+}
+
+[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --input-bg: #f1f5f9;
+    --accent-color: #2563eb;
+    --accent-hover: #1d4ed8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+header {
+    text-align: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.logo-container h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.sub-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.nav-btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-btn.active, .nav-btn:hover {
+    background: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+}
+
+.tag-chip {
+    transition: all 0.15s ease;
+}
+
+.tag-chip:hover {
+    background: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-color) !important;
+}
+
+.input-section, .output-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-family: monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.textarea-wrapper {
+    position: relative;
+}
+
+.icon-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.4rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: var(--border-color);
+}
+
+.controls-section {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    background: var(--accent-gradient);
+    color: #ffffff;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* File Upload Section */
+.file-upload-wrapper {
+    position: relative;
+    margin-top: 0.5rem;
+}
+
+.file-upload-wrapper input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.upload-area.drag-over, .upload-area:hover {
+    border-color: var(--accent-color);
+    background: var(--input-bg);
+}
+
+.file-count {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.bulk-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+.result-header {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+}
+
+/* Floating Theme Switch */
+.theme-switch-wrapper {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 60px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: var(--border-color);
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    border-radius: 34px;
+}
+
+.sun-icon, .moon-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--text-color);
+}
+
+footer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 2rem;
+}

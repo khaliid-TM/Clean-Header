@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Header Processor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="gemini-code-1788261347053.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="4" width="20" height="16" rx="2" fill="url(#logo-gradient)" />
+                        <path d="M4 6L12 13L20 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="2" y1="4" x2="22" y2="20" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3b82f6" />
+                                <stop offset="1" stop-color="#10b981" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>EMS1</h1>
+            </div>
+            <p>Clean and modify email headers with professional precision</p>
+        </header>
+
+        <main>
+            <div id="cleanSourceView">
+                <div class="mode-navigation sub-nav">
+                    <button class="nav-btn active" id="singleModeBtn">Single Source</button>
+                    <button class="nav-btn" id="bulkModeBtn">Bulk Source</button>
+                </div>
+
+                <!-- Global Settings Options -->
+                <div class="settings-group" style="max-width: 800px; margin: 0 auto 1.5rem auto; padding: 1.25rem; background: var(--card-bg, rgba(255, 255, 255, 0.05)); border-radius: 0.75rem; border: 1px solid var(--border-color, #334155);">
+                    
+                    <!-- Input Fields Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; text-align: left;">
+                        
+                        <!-- Domain Replacement Section -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="domainReplacementInput" style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary, #94a3b8); margin-bottom: 0.5rem;">Domain Replacement</label>
+                            <input type="text" id="domainReplacementInput" value="[RDNS]" style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color, #334155); background: var(--input-bg, rgba(255, 255, 255, 0.05)); color: var(--text-color, #ffffff); font-family: monospace; font-size: 0.95rem; box-sizing: border-box;">
+                            
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="tag-chip" data-target="domainReplacementInput" data-value="[P_RPATH]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[P_RPATH]</button>
+                                <button type="button" class="tag-chip" data-target="domainReplacementInput" data-value="[RDNS]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[RDNS]</button>
+                                <button type="button" class="tag-chip" data-target="domainReplacementInput" data-value="[RP]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[RP]</button>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary, #94a3b8); margin-top: 0.35rem; margin-bottom: 0;">Leave empty to strip domain entirely</p>
+                        </div>
+
+                        <!-- From User Tag Section -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="fromUserTagInput" style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary, #94a3b8); margin-bottom: 0.5rem;">From User Tag</label>
+                            <input type="text" id="fromUserTagInput" value="[3W]" style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color, #334155); background: var(--input-bg, rgba(255, 255, 255, 0.05)); color: var(--text-color, #ffffff); font-family: monospace; font-size: 0.95rem; box-sizing: border-box;">
+                            
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="tag-chip" data-target="fromUserTagInput" data-value="[3W]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[3W]</button>
+                                <button type="button" class="tag-chip" data-target="fromUserTagInput" data-value="[EID]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[EID]</button>
+                                <button type="button" class="tag-chip" data-target="fromUserTagInput" data-value="[RP]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[RP]</button>
+                                <button type="button" class="tag-chip" data-target="fromUserTagInput" data-value="" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-secondary, #94a3b8); cursor: pointer; font-size: 0.8rem; font-family: monospace;">(none)</button>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary, #94a3b8); margin-top: 0.35rem; margin-bottom: 0.5rem;">Appended to username before @</p>
+                            
+                            <div id="fromPreview" style="font-size: 0.85rem; font-family: monospace; color: var(--text-color, #ffffff);">
+                                &rarr; From: no-reply[3W]@[RDNS]
+                            </div>
+                        </div>
+
+                        <!-- To Field Replacement Section -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="toReplacementInput" style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary, #94a3b8); margin-bottom: 0.5rem;">To Field Replacement</label>
+                            <input type="text" id="toReplacementInput" value="[*to]" style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color, #334155); background: var(--input-bg, rgba(255, 255, 255, 0.05)); color: var(--text-color, #ffffff); font-family: monospace; font-size: 0.95rem; box-sizing: border-box;">
+                            
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="tag-chip" data-target="toReplacementInput" data-value="[*to]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[*to]</button>
+                                <button type="button" class="tag-chip" data-target="toReplacementInput" data-value="[FNAME] [*to]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[FNAME] [*to]</button>
+                                <button type="button" class="tag-chip" data-target="toReplacementInput" data-value="" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-secondary, #94a3b8); cursor: pointer; font-size: 0.8rem; font-family: monospace;">(none)</button>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary, #94a3b8); margin-top: 0.35rem; margin-bottom: 0;">Sets target format for To: header</p>
+                        </div>
+
+                        <!-- Date Format Section -->
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="dateFormatInput" style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary, #94a3b8); margin-bottom: 0.5rem;">Date Format</label>
+                            <input type="text" id="dateFormatInput" value="[D=>%a %d %b %Y %H:%M:%S %Z] +0[1N]00 (+0[1N])" style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color, #334155); background: var(--input-bg, rgba(255, 255, 255, 0.05)); color: var(--text-color, #ffffff); font-family: monospace; font-size: 0.95rem; box-sizing: border-box;">
+                            
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="tag-chip" data-target="dateFormatInput" data-value="[date]" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[date]</button>
+                                <button type="button" class="tag-chip" data-target="dateFormatInput" data-value="[D=>%a %d %b %Y %H:%M:%S %Z] +0[1N]00 (+0[1N])" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-color, #ffffff); cursor: pointer; font-size: 0.8rem; font-family: monospace;">[D=>%a %d...]</button>
+                                <button type="button" class="tag-chip" data-target="dateFormatInput" data-value="" style="padding: 0.25rem 0.75rem; border-radius: 1rem; border: 1px solid var(--border-color, #334155); background: rgba(255, 255, 255, 0.05); color: var(--text-secondary, #94a3b8); cursor: pointer; font-size: 0.8rem; font-family: monospace;">(none)</button>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary, #94a3b8); margin-top: 0.35rem; margin-bottom: 0;">Replaces Date: header timestamp</p>
+                        </div>
+
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color, #334155); margin: 1.25rem 0;">
+
+                    <!-- Header Rules Options Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; text-align: left;">
+                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optToStarTo" checked style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Enable To Replacement</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optKeepReceived" checked style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Keep Received:</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optKeepReplyTo" checked style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Keep Reply-To:</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optAddCcIfMissing" style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Add Cc: [*to] if missing</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optAddDrDnsSubject" checked style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Add [DRDNS_NAME]: to Subject</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-color); font-size: 0.9rem;">
+                            <input type="checkbox" id="optAddDrDnsFrom" checked style="accent-color: #10b981; width: 1.1rem; height: 1.1rem;">
+                            <span>Add [DRDNS_NAME] to From</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Single Mode Section -->
+                <div id="singleModeSection">
+                    <div class="input-section">
+                        <label for="emailSource">Source Email</label>
+                        <textarea id="emailSource" placeholder="Paste your raw email source here..."></textarea>
+                    </div>
+
+                    <div class="controls-section">
+                        <button id="processBtn" class="primary-btn">
+                            <span>Process Header</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="output-section">
+                        <label for="emailOutput">Result</label>
+                        <div class="textarea-wrapper">
+                            <textarea id="emailOutput" readonly placeholder="Processed output will appear here..."></textarea>
+                            <button id="copyBtn" class="icon-btn" title="Copy to Clipboard"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Mode Section -->
+                <div id="bulkModeSection" class="hidden">
+                    <div class="bulk-upload-section">
+                        <label for="fileInput">Upload Files to Clean (.txt, .eml)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="fileInput" multiple accept=".txt,.eml">
+                            <div class="upload-area" id="dropZone">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span>Choose files or drag & drop</span>
+                            </div>
+                        </div>
+                        <div id="fileCount" class="file-count">0 files selected</div>
+                    </div>
+
+                    <div id="bulkResultsContainer" class="bulk-results"></div>
+                </div>
+            </div>
+        </main>
+
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3V4M12 20V21M4 12H3M21 12H20M5.636 5.636L6.343 6.343M17.657 17.657L18.364 18.364M5.636 18.364L6.343 17.657M17.657 6.343L18.364 5.636M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+            </label>
+        </div>
+
+        <footer>
+            <p>K-TM ; 2026 - All rights reserved</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

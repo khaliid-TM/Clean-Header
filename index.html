@@ -179,7 +179,13 @@
                                 <span>Choose files or drag & drop</span>
                             </div>
                         </div>
-                        <div id="fileCount" class="file-count">0 files selected</div>
+                        <!-- Replace your existing <div id="fileCount"...> line with this block: -->
+						<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+							<div id="fileCount" class="file-count" style="margin-top: 0;">0 files selected</div>
+							<button id="clearAllBtn" class="primary-btn" style="background-color: #ef4444; border-color: #ef4444; width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; display: none;">
+								Clear All
+							</button>
+						</div>
                     </div>
 
                     <div id="bulkResultsContainer" class="bulk-results"></div>

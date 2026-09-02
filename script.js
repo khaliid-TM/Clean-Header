@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Elements
+    // UI & Action Elements
     const processBtn = document.getElementById('processBtn');
     const copyBtn = document.getElementById('copyBtn');
     const emailSource = document.getElementById('emailSource');
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const singleModeSection = document.getElementById('singleModeSection');
     const bulkModeSection = document.getElementById('bulkModeSection');
     const fileCountDiv = document.getElementById('fileCount');
+    const clearAllBtn = document.getElementById('clearAllBtn');
 
     // Dynamic Tag Inputs
     const domainReplacementInput = document.getElementById('domainReplacementInput');
@@ -31,7 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const optAddDrDnsSubject = document.getElementById('optAddDrDnsSubject');
     const optAddDrDnsFrom = document.getElementById('optAddDrDnsFrom');
 
-    // Icon SVGs
+    // In-memory cache for bulk uploaded raw files
+    let uploadedFiles = [];
+    let activeCopyBtn = null;
+
+    // Icons
     const COPY_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H16C17.1046 21 18 20.1046 18 19V17M19 15V7C19 5.89543 18.1046 5 17 5H15M8 5V7C8 7.55228 8.44772 8 9 8H13C13.5523 8 14 7.55228 14 7V5M8 5C8 4.44772 8.44772 4 9 4H13C13.5523 4 14 4.44772 14 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
@@ -40,38 +45,102 @@ document.addEventListener('DOMContentLoaded', () => {
         <path d="M20 6L9 17L4 12" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
 
-    let activeCopyBtn = null;
     if (copyBtn) copyBtn.innerHTML = COPY_ICON;
 
-    // Theme Switcher
+    // Theme Switcher Logic
     const currentTheme = localStorage.getItem('theme');
     if (currentTheme) {
         document.documentElement.setAttribute('data-theme', currentTheme);
-        if (currentTheme === 'light') toggleSwitch.checked = true;
+        if (currentTheme === 'light' && toggleSwitch) toggleSwitch.checked = true;
     }
 
-    toggleSwitch.addEventListener('change', (e) => {
-        const theme = e.target.checked ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', (e) => {
+            const theme = e.target.checked ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    }
+
+    // Sub Navigation Switcher
+    if (singleModeBtn && bulkModeBtn) {
+        singleModeBtn.addEventListener('click', () => {
+            singleModeBtn.classList.add('active');
+            bulkModeBtn.classList.remove('active');
+            singleModeSection.classList.remove('hidden');
+            bulkModeSection.classList.add('hidden');
+        });
+
+        bulkModeBtn.addEventListener('click', () => {
+            bulkModeBtn.classList.add('active');
+            singleModeBtn.classList.remove('active');
+            bulkModeSection.classList.remove('hidden');
+            singleModeSection.classList.add('hidden');
+        });
+    }
+
+    // Live From Header Preview Update
+    function updateFromPreview() {
+        const userTag = fromUserTagInput ? fromUserTagInput.value.trim() : '';
+        const domain = domainReplacementInput ? domainReplacementInput.value.trim() : '';
+        const domainPart = domain ? `@${domain}` : '';
+        if (fromPreview) {
+            fromPreview.innerHTML = `&rarr; From: no-reply${userTag}${domainPart}`;
+        }
+    }
+
+    // Real-Time Output Re-Processor for Single and Bulk Modes
+    function updateAllOutputs() {
+        // Re-process Single Mode
+        if (emailSource && emailSource.value.trim() && emailOutput) {
+            emailOutput.value = processEmailContent(emailSource.value);
+        }
+
+        // Re-process Bulk Mode
+        if (uploadedFiles.length > 0 && bulkResultsContainer) {
+            bulkResultsContainer.innerHTML = '';
+            for (const file of uploadedFiles) {
+                const processedContent = processEmailContent(file.content);
+                createResultCard(file.name, processedContent, bulkResultsContainer);
+            }
+        }
+    }
+
+    // Bind Real-Time Listeners to Input Fields & Checkboxes
+    const settingsElements = [
+        domainReplacementInput,
+        fromUserTagInput,
+        toReplacementInput,
+        dateFormatInput,
+        optToStarTo,
+        optKeepReceived,
+        optKeepReplyTo,
+        optAddCcIfMissing,
+        optAddDrDnsSubject,
+        optAddDrDnsFrom
+    ];
+
+    settingsElements.forEach(element => {
+        if (!element) return;
+        const eventType = element.type === 'checkbox' ? 'change' : 'input';
+        element.addEventListener(eventType, () => {
+            if (element === domainReplacementInput || element === fromUserTagInput) {
+                updateFromPreview();
+            }
+            updateAllOutputs();
+        });
     });
 
-    // Sub Navigation
-    singleModeBtn.addEventListener('click', () => {
-        singleModeBtn.classList.add('active');
-        bulkModeBtn.classList.remove('active');
-        singleModeSection.classList.remove('hidden');
-        bulkModeSection.classList.add('hidden');
-    });
+    // Real-time input handling for Single Source Textarea
+    if (emailSource) {
+        emailSource.addEventListener('input', () => {
+            if (emailOutput) {
+                emailOutput.value = emailSource.value.trim() ? processEmailContent(emailSource.value) : '';
+            }
+        });
+    }
 
-    bulkModeBtn.addEventListener('click', () => {
-        bulkModeBtn.classList.add('active');
-        singleModeBtn.classList.remove('active');
-        bulkModeSection.classList.remove('hidden');
-        singleModeSection.classList.add('hidden');
-    });
-
-    // Universal Tag Chip Event Handler
+    // Universal Tag Chip Click Handlers
     tagChips.forEach(chip => {
         chip.addEventListener('click', () => {
             const targetId = chip.getAttribute('data-target');
@@ -82,66 +151,83 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (targetId === 'domainReplacementInput' || targetId === 'fromUserTagInput') {
                     updateFromPreview();
                 }
+                updateAllOutputs();
             }
         });
     });
 
-    // Live Preview Update
-    function updateFromPreview() {
-        const userTag = fromUserTagInput ? fromUserTagInput.value.trim() : '';
-        const domain = domainReplacementInput ? domainReplacementInput.value.trim() : '';
-        const domainPart = domain ? `@${domain}` : '';
-        if (fromPreview) {
-            fromPreview.innerHTML = `&rarr; From: no-reply${userTag}${domainPart}`;
-        }
-    }
-
-    domainReplacementInput.addEventListener('input', updateFromPreview);
-    fromUserTagInput.addEventListener('input', updateFromPreview);
     updateFromPreview();
 
-    // Event Handlers
-    processBtn.addEventListener('click', () => {
-        const sourceText = emailSource.value;
-        if (!sourceText.trim()) return;
-        emailOutput.value = processEmailContent(sourceText);
-    });
+    // Process Button Action
+    if (processBtn) {
+        processBtn.addEventListener('click', () => {
+            const sourceText = emailSource ? emailSource.value : '';
+            if (!sourceText.trim()) return;
+            if (emailOutput) emailOutput.value = processEmailContent(sourceText);
+        });
+    }
 
-    copyBtn.addEventListener('click', () => {
-        copyToClipboard(emailOutput.value, copyBtn);
-    });
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            copyToClipboard(emailOutput ? emailOutput.value : '', copyBtn);
+        });
+    }
 
-    fileInput.addEventListener('change', handleCleanFileSelect);
-    fileInput.addEventListener('dragenter', () => dropZone.classList.add('drag-over'));
-    fileInput.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    fileInput.addEventListener('drop', () => dropZone.classList.remove('drag-over'));
+    // Dynamic Clear All Button Handler
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+            if (fileInput) fileInput.value = '';
+            uploadedFiles = [];
+            if (fileCountDiv) fileCountDiv.textContent = '0 files selected';
+            clearAllBtn.style.display = 'none';
+            if (bulkResultsContainer) bulkResultsContainer.innerHTML = '';
+        });
+    }
+
+    // File Drag-and-Drop & Upload
+    if (fileInput) {
+        fileInput.addEventListener('change', handleCleanFileSelect);
+    }
+
+    if (dropZone) {
+        dropZone.addEventListener('dragenter', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length && fileInput) {
+                fileInput.files = e.dataTransfer.files;
+                handleCleanFileSelect({ target: fileInput });
+            }
+        });
+    }
 
     async function handleCleanFileSelect(e) {
         const files = e.target.files;
-        if (!files.length) {
-            fileCountDiv.textContent = '0 files selected';
-            return;
-        }
+        if (!files || !files.length) return;
 
-        fileCountDiv.textContent = `Processing ${files.length} file(s)...`;
-        bulkResultsContainer.innerHTML = '';
+        if (fileCountDiv) fileCountDiv.textContent = `Processing ${files.length} file(s)...`;
+        uploadedFiles = [];
 
         for (const file of Array.from(files)) {
             try {
                 const content = await file.text();
-                const processedContent = processEmailContent(content);
-                createResultCard(file.name, processedContent, bulkResultsContainer);
+                uploadedFiles.push({ name: file.name, content: content });
             } catch (error) {
-                console.error(`Error processing ${file.name}:`, error);
-                createResultCard(file.name, `Error processing file: ${error.message}`, bulkResultsContainer);
+                console.error(`Error reading ${file.name}:`, error);
+                uploadedFiles.push({ name: file.name, content: `Error processing file: ${error.message}` });
             }
         }
 
-        fileCountDiv.textContent = `${files.length} file(s) cleaned`;
+        if (fileCountDiv) fileCountDiv.textContent = `${uploadedFiles.length} file(s) cleaned`;
+        if (clearAllBtn) clearAllBtn.style.display = 'block';
+
+        updateAllOutputs();
         e.target.value = '';
     }
 
-    // Core Header Processing
+    // Core Header Processing Logic
     function processEmailContent(sourceText) {
         const parts = splitHeadersAndBody(sourceText);
         const parsedHeaders = parseHeaders(parts.headers);
@@ -249,9 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (addCcIfMissing && !hasCc) {
-			const ccVal = toTagVal || '[*to]';
-			processed.push({ name: 'Cc', value: ` ${ccVal}` });
-		}
+            const ccVal = toTagVal || '[*to]';
+            processed.push({ name: 'Cc', value: ` ${ccVal}` });
+        }
 
         return processed;
     }
